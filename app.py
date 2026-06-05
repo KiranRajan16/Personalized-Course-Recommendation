@@ -5,51 +5,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-# ---------------------------------------------------
-# PAGE CONFIGURATION
-# ---------------------------------------------------
-
+# Page Configuration
 st.set_page_config(
-    page_title="EduPro Learner Analytics Dashboard",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# ---------------------------------------------------
-# LOAD CUSTOM CSS
-# ---------------------------------------------------
-
+# Loading CSS
 with open("styles.css") as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# TITLE SECTION
-# ---------------------------------------------------
-
+# Title
 st.markdown("""
 <div class="main-header">
-    <h1>EduPro Learner Analytics Dashboard</h1>
     <p>
-        Student Segmentation and Personalized Course Recommendation System
+        Student Segmentation and Personalized Course Recommendation System for EduPro
     </p>
 </div>
 """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# PROJECT DESCRIPTION
-# ---------------------------------------------------
-
+# Project Description
 st.info("""
 This dashboard uses uploaded EduPro learner transaction data for analytics,
 behavior analysis, engagement tracking, revenue analysis, and learner insights.
 The project is developed using Streamlit, Python, Pandas, Matplotlib, and Seaborn.
 """)
 
-# ---------------------------------------------------
-# LOAD DATA
-# ---------------------------------------------------
-
+# Data Loading
 @st.cache_data
 def load_data():
     data = pd.read_csv("data/EduPro Online Platform.csv")
@@ -57,10 +40,7 @@ def load_data():
 
 df = load_data()
 
-# ---------------------------------------------------
-# DATA CLEANING
-# ---------------------------------------------------
-
+# Data Cleaning
 df.drop_duplicates(inplace=True)
 
 df.dropna(subset=['UserID', 'CourseID'], inplace=True)
@@ -69,10 +49,7 @@ df['TransactionDate'] = pd.to_datetime(df['TransactionDate'])
 
 df['Month'] = df['TransactionDate'].dt.month_name()
 
-# ---------------------------------------------------
-# FEATURE ENGINEERING
-# ---------------------------------------------------
-
+# Feature Engineering
 total_courses = df.groupby('UserID')['CourseID'].count()
 
 avg_spending = df.groupby('UserID')['Amount'].mean()
@@ -91,10 +68,7 @@ diversity_score = df.groupby('UserID')['CourseCategory'].nunique()
 
 enrollment_frequency = df.groupby('UserID')['CourseID'].count()
 
-# ---------------------------------------------------
-# LEARNER PROFILE
-# ---------------------------------------------------
-
+# Learner Profile
 learner_profile = pd.DataFrame({
     'TotalCourses': total_courses,
     'AverageSpending': avg_spending,
@@ -108,11 +82,11 @@ learner_profile = pd.DataFrame({
 
 learner_profile.reset_index(inplace=True)
 
-# ---------------------------------------------------
-# SIDEBAR FILTERS
-# ---------------------------------------------------
-
-st.sidebar.markdown("## Dashboard Filters")
+# Filters
+st.sidebar.markdown(
+    "<h2 class='sidebar-title'>🔍 Filters</h2>",
+    unsafe_allow_html=True
+)
 
 category_filter = st.sidebar.multiselect(
     "Select Course Category",
@@ -146,10 +120,7 @@ filtered_df = df[
     (df['Amount'] >= min_spending)
 ]
 
-# ---------------------------------------------------
-# KPI SECTION
-# ---------------------------------------------------
-
+# KPIs
 st.markdown("---")
 
 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
@@ -159,33 +130,81 @@ with kpi1:
         "Total Learners",
         filtered_df['UserID'].nunique()
     )
-    st.caption("Represents the number of unique learners currently active in the filtered dataset.")
-
+    st.markdown("""
+        <div class="kpi-description">
+        Represents the number of unique learners currently active in the filtered dataset.
+        </div>
+        """, unsafe_allow_html=True)
+    
 with kpi2:
     st.metric(
         "Total Courses",
         filtered_df['CourseID'].nunique()
     )
-    st.caption("Shows the number of unique courses available under selected filters.")
+    st.markdown("""
+        <div class="kpi-description">
+        Shows the number of unique courses available under selected filters.
+        </div>
+        """, unsafe_allow_html=True)
 
 with kpi3:
     st.metric(
         "Total Revenue",
         f"₹ {round(filtered_df['Amount'].sum(), 2)}"
     )
-    st.caption("Indicates total learner spending generated from course enrollments.")
+    st.markdown("""
+        <div class="kpi-description">
+        Indicates total learner spending generated from course enrollments.
+        </div>
+        """, unsafe_allow_html=True)
 
 with kpi4:
     st.metric(
         "Average Rating",
         round(filtered_df['CourseRating'].mean(), 2)
     )
-    st.caption("Displays average learner satisfaction based on course ratings.")
+    st.markdown("""
+        <div class="kpi-description">
+        Displays average learner satisfaction based on course ratings.
+        </div>
+        """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# TABS
-# ---------------------------------------------------
+# Key Fidings 
+st.markdown("---")
 
+st.markdown("""
+<div class="section-title">
+Key Findings
+</div>
+""", unsafe_allow_html=True)
+
+col1,col2,col3=st.columns(3)
+
+with col1:
+    st.markdown(f"""
+    <div class="finding-card">
+    <h4>Most Popular Category</h4>
+    <p>{filtered_df['CourseCategory'].mode()[0]}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col2:
+    st.markdown(f"""
+    <div class="finding-card">
+    <h4>Highest Rated Category</h4>
+    <p>{filtered_df.groupby('CourseCategory')['CourseRating'].mean().idxmax()}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown(f"""
+    <div class="finding-card">
+    <h4>Average Learner Spend</h4>
+    <p>₹ {round(filtered_df['Amount'].mean(),2)}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# Tabs
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Overview",
     "Learner Insights",
@@ -194,19 +213,21 @@ tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "Recommendations"
 ])
 
-# ---------------------------------------------------
-# OVERVIEW TAB
-# ---------------------------------------------------
-
+# Overview Tab
 with tab1:
 
-    st.subheader("Platform Overview")
-
     st.markdown("""
-This section provides a high-level understanding of learner participation,
-course preferences, and engagement patterns across the EduPro platform.
-""")
-
+        <div class="tab-title">
+        Platform Overview
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown("""
+        <div class="tab-description">
+        This section provides a high-level understanding of learner participation,
+        course preferences, and engagement patterns across the EduPro platform.
+        </div>
+        """, unsafe_allow_html=True)
+   
     graph1, graph2 = st.columns(2)
 
     with graph1:
@@ -225,11 +246,12 @@ course preferences, and engagement patterns across the EduPro platform.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-Technology-oriented domains such as Data Science, Cloud Computing,
-and AI attract the highest learner enrollments.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        Technology-oriented domains such as Data Science, Cloud Computing, and AI attract the highest learner enrollments.
+        </div>
+        """, unsafe_allow_html=True)
 
     with graph2:
 
@@ -247,25 +269,28 @@ and AI attract the highest learner enrollments.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-Beginner and Intermediate courses dominate enrollments,
-indicating strong participation from early-stage learners.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        Beginner and Intermediate courses dominate enrollments, indicating strong participation from early-stage learners.
+        </div>
+        """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# LEARNER INSIGHTS TAB
-# ---------------------------------------------------
-
+# Learner Insights Tab
 with tab2:
 
-    st.subheader("Learner Behavior Analytics")
-
     st.markdown("""
-This section analyzes learner engagement, course exploration behavior,
-and participation intensity across the platform.
-""")
-
+        <div class="tab-title">
+        Learner Behavior Analytics
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown("""
+        <div class="tab-description">
+        This section analyzes learner engagement, course exploration behavior,
+        and participation intensity across the platform.
+        </div>
+        """, unsafe_allow_html=True)
+   
     graph1, graph2 = st.columns(2)
 
     with graph1:
@@ -284,11 +309,12 @@ and participation intensity across the platform.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-A smaller segment of highly active learners contributes
-significantly to overall platform engagement.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        A smaller segment of highly active learners contributes significantly to overall platform engagement.
+        </div>
+        """, unsafe_allow_html=True)
 
     with graph2:
 
@@ -306,11 +332,12 @@ significantly to overall platform engagement.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-Many learners explore multiple course domains,
-indicating interest in interdisciplinary learning.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        Many learners explore multiple domains, indicating strong interdisciplinary learning behavior.
+        </div>
+        """, unsafe_allow_html=True)
 
     # Drill-down Filter
 
@@ -325,21 +352,44 @@ indicating interest in interdisciplinary learning.
         filtered_df['CourseCategory'] == selected_category
     ]
 
-    st.dataframe(category_data.head(10))
+    metric1,metric2,metric3 = st.columns(3)
 
-# ---------------------------------------------------
-# COURSE ANALYTICS TAB
-# ---------------------------------------------------
+    with metric1:
+        st.metric(
+        "Enrollments",
+        len(category_data)
+    )
 
+    with metric2:
+        st.metric(
+        "Average Rating",
+        round(category_data['CourseRating'].mean(),2)
+    )
+
+    with metric3:
+        st.metric(
+        "Revenue",
+        f"₹ {round(category_data['Amount'].sum(),2)}"
+    )
+
+    with st.expander("View Detailed Records"):
+        st.dataframe(category_data.head(20))
+
+# Course Analytics Tab
 with tab3:
 
-    st.subheader("Course Analytics")
-
     st.markdown("""
-This section focuses on course ratings, learner demographics,
-and category-level engagement patterns.
-""")
-
+        <div class="tab-title">
+        Course Analytics
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown("""
+        <div class="tab-description">
+        This section focuses on course ratings, learner demographics,
+        and category-level engagement patterns.
+        </div>
+        """, unsafe_allow_html=True)
+    
     graph1, graph2 = st.columns(2)
 
     with graph1:
@@ -362,11 +412,12 @@ and category-level engagement patterns.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-Highly rated categories demonstrate stronger learner
-satisfaction and engagement levels.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        Highly rated categories demonstrate stronger learner satisfaction and engagement levels.
+        </div>
+        """, unsafe_allow_html=True)
 
     with graph2:
 
@@ -384,25 +435,49 @@ satisfaction and engagement levels.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-The platform demonstrates balanced participation
-across learner demographics.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        The platform demonstrates balanced participation across learner demographics.
+        </div>
+        """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# REVENUE ANALYSIS TAB
-# ---------------------------------------------------
-
+# Revenue Analysis Tab
 with tab4:
 
-    st.subheader("Revenue and Enrollment Trends")
-
     st.markdown("""
-This section analyzes learner spending behavior,
-revenue distribution, and enrollment trends over time.
-""")
+        <div class="tab-title">
+        Revenue and Enrollment Trends
+        </div>
+        """, unsafe_allow_html=True)
+    st.markdown("""
+        <div class="tab-description">
+        This section analyzes learner spending behavior, revenue distribution, and enrollment trends over time.
+        </div>
+        """, unsafe_allow_html=True)
+   
+    rev1,rev2,rev3 = st.columns(3)
 
+    with rev1:
+        st.metric(
+        "Average Transaction",
+        f"₹ {round(filtered_df['Amount'].mean(),2)}"
+    )
+
+    with rev2:
+        st.metric(
+        "Highest Revenue Category",
+        filtered_df.groupby(
+            'CourseCategory'
+        )['Amount'].sum().idxmax()
+    )
+
+    with rev3:
+        st.metric(
+        "Maximum Transaction",
+        f"₹ {round(filtered_df['Amount'].max(),2)}"
+    )
+        
     graph1, graph2 = st.columns(2)
 
     with graph1:
@@ -421,11 +496,13 @@ revenue distribution, and enrollment trends over time.
 
         st.pyplot(fig)
 
-        st.success("""
-Insight:
-Most learners fall into moderate spending ranges,
-while premium learners contribute significantly higher revenue.
-""")
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        Insight:
+        Most learners fall into moderate spending ranges, while premium learners contribute significantly higher revenue.
+        </div>
+        """, unsafe_allow_html=True)
 
     with graph2:
 
@@ -447,43 +524,74 @@ while premium learners contribute significantly higher revenue.
 
         st.pyplot(fig)
 
-        st.success("""
-Predictive Insight:
-Current trends suggest technology-oriented courses
-will continue driving higher enrollments in upcoming periods.
-""")
+        st.markdown("""
+        <div class="forecast-box">
+        <h4>Trend-Based Forecast</h4>
+        <p>Current enrollment patterns suggest that technology-focused categories are likely 
+                    to continue attracting higher learner participation.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-# ---------------------------------------------------
-# RECOMMENDATIONS TAB
-# ---------------------------------------------------
+        st.markdown("""
+        <div class="insight-box">
+        <b>Insight:</b><br>
+        Predictive Insight:
+        Current trends suggest technology-oriented courses will continue driving higher enrollments in upcoming periods.
+        </div>
+        """, unsafe_allow_html=True)
 
+# Recomendations Tab
 with tab5:
 
-    st.subheader("""Business Recommendations""")
     st.markdown("""
-#### 1. Focus on Beginner Learners
-Expand beginner-friendly learning pathways since beginner courses dominate enrollments.
+        <div class="tab-title">
+        Business Recommendations
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="recommendation-card">
+    <h4>Focus on Beginner Learners</h4>
+    <p>Expand beginner learning pathways because they contribute the largest share of enrollments.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-#### 2. Promote High-Rated Categories
-Invest more in highly rated domains such as AI, Data Science, and Cloud Computing.
+    st.markdown("""
+    <div class="recommendation-card">
+    <h4>Promote High-Rated Categories</h4>
+    <p>Invest more in highly rated domains such as AI, Data Science, and Cloud Computing.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="recommendation-card">
+    <h4>Increase Learner Retention</h4>
+    <p>Target low-engagement learners through personalized campaigns and engagement initiatives.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="recommendation-card">
+    <h4>Expand Premium Offerings</h4>
+    <p>Introduce advanced certifications and premium programs for high-spending learners.</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="recommendation-card">
+    <h4>Cross-Domain Learning</h4>
+    <p>Encourage learners to explore multiple domains through bundled learning tracks.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-#### 3. Increase Learner Retention
-Target low-engagement learners through personalized campaigns and engagement initiatives.
+    st.markdown("""
+    <div class="recommendation-card">
+    <h4>Seasonal Enrollment Planning</h4>
+    <p>Use monthly enrollment patterns to optimize marketing and promotional campaigns.</p>
+    </div>
+    """, unsafe_allow_html=True)
 
-#### 4. Expand Premium Offerings
-Introduce advanced certifications and premium programs for high-spending learners.
-
-#### 5. Cross-Domain Learning
-Encourage learners to explore multiple domains through bundled learning tracks.
-
-#### 6. Seasonal Enrollment Planning
-Use monthly enrollment patterns to optimize marketing and promotional campaigns.
-""")
-
-# ---------------------------------------------------
-# FOOTER
-# ---------------------------------------------------
-
+# Footer
 st.markdown("---")
 
 st.markdown("""

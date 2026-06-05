@@ -1,7 +1,7 @@
 /* style.css */
 
-body {
-    background-color: #f5f7fa;
+.stApp {
+    background-color: #090909 !important;
 }
 
 .main-header {
@@ -14,13 +14,8 @@ body {
     box-shadow: 0px 4px 10px rgba(0,0,0,0.15);
 }
 
-.main-header h1 {
-    font-size: 42px;
-    margin-bottom: 10px;
-}
-
 .main-header p {
-    font-size: 18px;
+    font-size: 50px !important;
 }
 
 .stMetric {
@@ -67,11 +62,146 @@ div.stDownloadButton > button {
 
 .footer {
     text-align: center;
-    color: gray;
+    color: rgb(252, 82, 82);
     font-size: 14px;
     padding: 15px;
 }
 
 .stAlert {
     border-radius: 10px;
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background: rgb(8, 8, 8) !important;
+    color: black !important;
+}
+
+/* Sidebar title */
+.sidebar-title {
+    color: #f70606 !important;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+/* Labels */
+section[data-testid="stSidebar"] label {
+    color: black !important;
+    background: #f2bc4f !important;
+}
+
+/* Multiselect container */
+section[data-testid="stSidebar"] .stMultiSelect > div {
+    padding: 0 !important;
+}
+
+/* Text */
+section[data-testid="stSidebar"] [data-baseweb="tag"] span {
+    font-size: 13px !important;
+    color: black !important;
+}
+
+/* KPI Description Text */
+
+.kpi-description{
+    font-size:18px;
+    color:#6b7280;
+    line-height:1.5;
+    margin-top:5px;
+}
+
+/* Section Headings */
+
+.section-title{
+    font-size:26px;
+    font-weight:600;
+    margin-bottom:20px;
+    color:#1f4e79;
+}
+
+/* Key Findings */
+
+.finding-card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.finding-card h4{
+    color:#1f4e79;
+    margin-bottom:10px;
+}
+
+.finding-card p{
+    font-size:18px;
+    font-weight:600;
+}
+
+/* Graph Insights */
+
+.insight-box{
+    background:#eef7ff;
+    border-left:5px solid #2e86c1;
+    padding:15px;
+    border-radius:10px;
+    margin-top:10px;
+    font-size:14px;
+    line-height:1.6;
+}
+
+/* Recommendation Cards */
+
+.recommendation-card{
+    background:white;
+    padding:18px;
+    border-radius:12px;
+    border-left:5px solid #1f4e79;
+    box-shadow:0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom:15px;
+}
+
+.recommendation-card h4{
+    color:#1f4e79;
+    margin-bottom:8px;
+}
+
+/* Forecast Section */
+
+.forecast-box{
+    background:#fff8e6;
+    border-left:5px solid #f4b400;
+    padding:18px;
+    border-radius:10px;
+    margin-top:20px;
+}
+
+/* Section Description */
+
+.section-description{
+    color:#555555;
+    font-size:15px;
+    line-height:1.7;
+    margin-bottom:20px;
+}
+
+/* Tab Title */
+.tab-title{
+    font-size:30px;
+    color:#f9f94c;
+    line-height:1.5;
+    margin-top:5px;
+    margin-bottom:5px;
+}
+
+/* Tab Description */
+.tab-description{
+    font-size:15px;
+    color:#c04994;
+    line-height:1.5;
+    margin-top:5px;
+    margin-bottom:5px;
 }
