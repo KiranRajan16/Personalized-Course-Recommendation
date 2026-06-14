@@ -339,42 +339,6 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-    # Drill-down Filter
-
-    st.markdown("### Drill-Down Analysis")
-
-    selected_category = st.selectbox(
-        "Select Category for Detailed Analysis",
-        filtered_df['CourseCategory'].unique()
-    )
-
-    category_data = filtered_df[
-        filtered_df['CourseCategory'] == selected_category
-    ]
-
-    metric1,metric2,metric3 = st.columns(3)
-
-    with metric1:
-        st.metric(
-        "Enrollments",
-        len(category_data)
-    )
-
-    with metric2:
-        st.metric(
-        "Average Rating",
-        round(category_data['CourseRating'].mean(),2)
-    )
-
-    with metric3:
-        st.metric(
-        "Revenue",
-        f"₹ {round(category_data['Amount'].sum(),2)}"
-    )
-
-    with st.expander("View Detailed Records"):
-        st.dataframe(category_data.head(20))
-
 # Course Analytics Tab
 with tab3:
 
